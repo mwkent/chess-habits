@@ -6,6 +6,7 @@ And some handy classes to extend
 from chess.engine import PlayResult
 import random
 from engine_wrapper import EngineWrapper
+from src import habits1
 
 
 class FillerEngine:
@@ -104,3 +105,10 @@ class FirstMove(ExampleEngine):
         moves = list(board.legal_moves)
         moves.sort(key=str)
         return PlayResult(moves[0], None)
+
+
+class Habits1(ExampleEngine):
+    """Gets the first move when sorted by uci representation"""
+    def search(self, board, *args):
+        move = habits1.search(board)
+        return PlayResult(move, None)
