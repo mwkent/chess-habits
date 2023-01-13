@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import chess
 from chess import Board, Move, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
 
 
@@ -13,6 +14,7 @@ def sort_moves(board: Board) -> List[Move]:
     Priority is:
     1. Take free pieces
     2. Take equal trades
+    3. Control the center
     """
     moves_to_priorities = get_priority_map(board)
 
@@ -38,8 +40,10 @@ def get_priority(board: Board, move: Move) -> int:
         return 0
     elif is_equal_trade(board, move):
         return 1
-    else:
+    elif is_move_towards_center(board, move):
         return 2
+    else:
+        return 3
 
 
 def is_free_capture(board: Board, move: Move) -> bool:
@@ -53,3 +57,12 @@ def is_equal_trade(board: Board, move: Move) -> bool:
     return board.is_en_passant(move) or (board.is_capture(move) and
                                          (piece_types_to_values[board.piece_type_at(move.from_square)] ==
                                           piece_types_to_values[board.piece_type_at(move.to_square)]))
+
+
+def is_move_towards_center(board: Board, move: Move) -> bool:
+    center = {chess.C3, chess.C4, chess.C5, chess.C6,
+              chess.D3, chess.D4, chess.D5, chess.D6,
+              chess.E3, chess.E4, chess.E5, chess.E6,
+              chess.F3, chess.F4, chess.F5, chess.F6}
+    return move.from_square not in center and move.to_square in center \
+        and board.piece_type_at(move.from_square) != chess.KING
