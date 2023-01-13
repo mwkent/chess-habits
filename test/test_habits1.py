@@ -1,6 +1,11 @@
 from chess import Board, Move
 
-from src.habits1 import sort_moves, get_priority_map, get_priority
+from src.habits1 import sort_moves, get_priority_map, get_priority, search
+
+
+def test_search():
+    board = Board("2kr1bn1/pb1qp3/npP4r/5Pp1/8/5N2/PP3PPP/RNBQKB1R w KQ g6 0 12")
+    move = search(board)
 
 
 def test_sort_moves():
