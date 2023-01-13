@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict
 
 import chess
@@ -30,6 +31,7 @@ def get_priority_map(board: Board) -> Dict[Move, int]:
     """
     moves_to_priorities = {}
     moves = list(board.legal_moves)
+    random.shuffle(moves)  # Helps to add variety to moves
     for move in moves:
         moves_to_priorities[move] = get_priority(board, move)
     return moves_to_priorities
