@@ -4,8 +4,7 @@ from chess import Board, Move, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
 
 
 def search(board: Board) -> Move:
-    moves = list(board.legal_moves)
-    sorted_moves = sort_moves(moves)
+    sorted_moves = sort_moves(board)
     return sorted_moves[0]
 
 
@@ -44,6 +43,7 @@ def get_priority(board: Board, move: Move) -> int:
 
 
 def is_free_capture(board: Board, move: Move) -> bool:
+    # TODO: Should only consider pieces, not pawns?
     # Is capture and no defenders
     return board.is_capture(move) and not board.is_attacked_by(not board.turn, move.to_square)
 
