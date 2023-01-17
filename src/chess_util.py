@@ -2,10 +2,19 @@ import chess
 from chess import Board, Move, Square, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
 
 
+PIECE_TYPES_TO_VALUES = {PAWN: 1, KNIGHT: 3, BISHOP: 3, ROOK: 5, QUEEN: 9}
+
+
 def is_free_capture(board: Board, move: Move) -> bool:
     # TODO: Should only consider pieces, not pawns?
     # Is capture and no defenders
     return board.is_capture(move) and not board.is_attacked_by(not board.turn, move.to_square)
+
+
+def is_higher_value_capture(board: Board, move: Move) -> bool:
+    return board.is_capture(move) and not board.is_en_passant(move) and \
+           PIECE_TYPES_TO_VALUES[board.piece_type_at(move.from_square)] < \
+           PIECE_TYPES_TO_VALUES[board.piece_type_at(move.to_square)]
 
 
 def is_saving_hanging_piece(board: Board, move: Move) -> bool:

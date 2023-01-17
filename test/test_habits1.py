@@ -21,6 +21,7 @@ def test_get_priority():
     expected_to_moves = {
         0: 'f3g5',  # Capture hanging piece
         0: 'c1g5',  # Capture hanging piece
+        0: 'c6b7',  # Capture higher value piece
         1: 'd1d3',  # Save hanging piece
         1: 'f1b5',  # Save hanging piece
         2: 'f1a6',  # Equal trade

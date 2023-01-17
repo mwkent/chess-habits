@@ -3,7 +3,8 @@ from typing import List, Dict
 
 from chess import Board, Move
 
-from src.chess_util import is_free_capture, is_saving_hanging_piece, is_equal_trade, is_move_towards_center
+from src.chess_util import is_free_capture, is_saving_hanging_piece, is_equal_trade, is_move_towards_center, \
+    is_higher_value_capture
 
 
 def search(board: Board) -> Move:
@@ -41,7 +42,7 @@ def get_priority_map(board: Board) -> Dict[Move, int]:
 def get_priority(board: Board, move: Move) -> int:
     # TODO: King towards center and attack pawns
     # TODO: Random pawn moves last
-    if is_free_capture(board, move):
+    if is_free_capture(board, move) or is_higher_value_capture(board, move):
         return 0
     elif is_saving_hanging_piece(board, move):
         return 1
