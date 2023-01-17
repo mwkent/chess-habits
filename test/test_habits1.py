@@ -22,13 +22,14 @@ def test_get_priority():
         0: 'f3g5',  # Capture hanging piece
         0: 'c1g5',  # Capture hanging piece
         0: 'c6b7',  # Capture higher value piece
-        1: 'd1d3',  # Save hanging piece
-        1: 'f1b5',  # Save hanging piece
-        2: 'f1a6',  # Equal trade
-        2: 'd1d7',  # Equal trade
-        2: 'f5g6',  # Equal trade
+        1: 'f1a6',  # Equal trade
+        1: 'd1d7',  # Equal trade
+        1: 'f5g6',  # Equal trade
+        2: 'd1d3',  # Save hanging piece
+        2: 'f1b5',  # Save hanging piece
         4: 'c1e3',  # Center move
-        5: 'a2a3'
+        5: 'a2a3',  # Not losing material
+        6: 'b2b4'
     }
     for expected_priority, move in expected_to_moves.items():
         assert expected_priority == get_priority(board, Move.from_uci(move))

@@ -4,7 +4,7 @@ from typing import List, Dict
 from chess import Board, Move
 
 from src.chess_util import is_free_capture, is_saving_hanging_piece, is_equal_trade, is_move_towards_center, \
-    is_higher_value_capture
+    is_higher_value_capture, is_losing_material
 
 
 def search(board: Board) -> Move:
@@ -44,13 +44,15 @@ def get_priority(board: Board, move: Move) -> int:
     # TODO: Random pawn moves last
     if is_free_capture(board, move) or is_higher_value_capture(board, move):
         return 0
-    elif is_saving_hanging_piece(board, move):
-        return 1
     elif is_equal_trade(board, move):
+        return 1
+    elif is_saving_hanging_piece(board, move):
         return 2
     elif board.is_castling(move):
         return 3
-    elif is_move_towards_center(board, move):
+    elif is_move_towards_center(board, move) and not is_losing_material(board, move):
         return 4
-    else:
+    elif not is_losing_material(board, move):
         return 5
+    else:
+        return 6

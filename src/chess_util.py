@@ -11,14 +11,19 @@ def is_free_capture(board: Board, move: Move) -> bool:
     return board.is_capture(move) and not board.is_attacked_by(not board.turn, move.to_square)
 
 
+def value_at(board: Board, piece: Square):
+    return PIECE_TYPES_TO_VALUES[board.piece_type_at(piece)]
+
+
 def is_higher_value_capture(board: Board, move: Move) -> bool:
     return board.is_capture(move) and not board.is_en_passant(move) and \
-           PIECE_TYPES_TO_VALUES[board.piece_type_at(move.from_square)] < \
-           PIECE_TYPES_TO_VALUES[board.piece_type_at(move.to_square)]
+           value_at(board, move.from_square) < value_at(board, move.to_square)
 
 
 def is_saving_hanging_piece(board: Board, move: Move) -> bool:
     piece_color = board.color_at(move.from_square)
+    if is_losing_material(board, move):
+        return False
     for piece_type in range(1, 6):  # All piece types except king
         for piece in board.pieces(piece_type, piece_color):
             if is_piece_hanging(board, piece):
@@ -35,6 +40,25 @@ def is_saving_hanging_piece(board: Board, move: Move) -> bool:
 def is_piece_hanging(board: Board, piece: Square) -> bool:
     piece_color = board.color_at(piece)
     return board.is_attacked_by(not piece_color, piece) and not board.is_attacked_by(piece_color, piece)
+
+
+def is_piece_attacked_by_weaker_piece(board: Board, piece: Square) -> bool:
+    piece_color = board.color_at(piece)
+    attackers = board.attackers(not piece_color, piece)
+    return any(value_at(board, attacker) < value_at(board, piece) for attacker in attackers)
+
+
+def is_losing_material(board: Board, move: Move) -> bool:
+    """
+    Does the move hang a piece or sacrifice material (e.g. moves bishop under attack of pawn)
+    """
+    board.push(move)
+    try:
+        if is_piece_hanging(board, move.to_square) or is_piece_attacked_by_weaker_piece(board, move.to_square):
+            return True
+    finally:
+        board.pop()
+    return False
 
 
 def is_equal_trade(board: Board, move: Move) -> bool:
