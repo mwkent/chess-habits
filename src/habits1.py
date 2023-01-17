@@ -1,8 +1,9 @@
 import random
 from typing import List, Dict
 
-import chess
-from chess import Board, Move, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
+from chess import Board, Move
+
+from src.chess_util import is_free_capture, is_saving_hanging_piece, is_equal_trade, is_move_towards_center
 
 
 def search(board: Board) -> Move:
@@ -38,33 +39,17 @@ def get_priority_map(board: Board) -> Dict[Move, int]:
 
 
 def get_priority(board: Board, move: Move) -> int:
+    # TODO: King towards center and attack pawns
+    # TODO: Random pawn moves last
     if is_free_capture(board, move):
         return 0
-    elif is_equal_trade(board, move):
+    elif is_saving_hanging_piece(board, move):
         return 1
-    elif is_move_towards_center(board, move):
+    elif is_equal_trade(board, move):
         return 2
-    else:
+    elif board.is_castling(move):
         return 3
-
-
-def is_free_capture(board: Board, move: Move) -> bool:
-    # TODO: Should only consider pieces, not pawns?
-    # Is capture and no defenders
-    return board.is_capture(move) and not board.is_attacked_by(not board.turn, move.to_square)
-
-
-def is_equal_trade(board: Board, move: Move) -> bool:
-    piece_types_to_values = {PAWN: 1, KNIGHT: 3, BISHOP: 3, ROOK: 5, QUEEN: 9}
-    return board.is_en_passant(move) or (board.is_capture(move) and
-                                         (piece_types_to_values[board.piece_type_at(move.from_square)] ==
-                                          piece_types_to_values[board.piece_type_at(move.to_square)]))
-
-
-def is_move_towards_center(board: Board, move: Move) -> bool:
-    center = {chess.C3, chess.C4, chess.C5, chess.C6,
-              chess.D3, chess.D4, chess.D5, chess.D6,
-              chess.E3, chess.E4, chess.E5, chess.E6,
-              chess.F3, chess.F4, chess.F5, chess.F6}
-    return move.from_square not in center and move.to_square in center \
-        and board.piece_type_at(move.from_square) != chess.KING
+    elif is_move_towards_center(board, move):
+        return 4
+    else:
+        return 5
