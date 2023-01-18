@@ -1,8 +1,8 @@
 import chess
-from chess import Board, Move, Square, Color, SquareSet, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
+from chess import Board, Move, Square, Color, SquareSet, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 
 
-PIECE_TYPES_TO_VALUES = {PAWN: 1, KNIGHT: 3, BISHOP: 3, ROOK: 5, QUEEN: 9}
+PIECE_TYPES_TO_VALUES = {PAWN: 1, KNIGHT: 3, BISHOP: 3, ROOK: 5, QUEEN: 9, KING: 10_000}
 
 
 def is_free_capture(board: Board, move: Move) -> bool:
