@@ -42,6 +42,7 @@ def get_priority_map(board: Board) -> Dict[Move, int]:
 def get_priority(board: Board, move: Move) -> int:
     # TODO: King towards center and attack pawns
     # TODO: Random pawn moves last
+    # TODO: Add checks
     if is_free_capture(board, move) or is_higher_value_capture(board, move):
         return 0
     elif is_equal_trade(board, move):

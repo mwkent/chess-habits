@@ -1,5 +1,5 @@
 import chess
-from chess import Board, Move, Square, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
+from chess import Board, Move, Square, Color, SquareSet, PAWN, KNIGHT, BISHOP, ROOK, QUEEN
 
 
 PIECE_TYPES_TO_VALUES = {PAWN: 1, KNIGHT: 3, BISHOP: 3, ROOK: 5, QUEEN: 9}
@@ -20,20 +20,26 @@ def is_higher_value_capture(board: Board, move: Move) -> bool:
            value_at(board, move.from_square) < value_at(board, move.to_square)
 
 
+def get_pieces(board: Board, color: Color) -> SquareSet:
+    pieces: SquareSet = SquareSet()
+    for piece_type in range(1, 6):  # All piece types except king
+        pieces = pieces.union(board.pieces(piece_type, color))
+    return pieces
+
+
 def is_saving_hanging_piece(board: Board, move: Move) -> bool:
     piece_color = board.color_at(move.from_square)
     if is_losing_material(board, move):
         return False
-    for piece_type in range(1, 6):  # All piece types except king
-        for piece in board.pieces(piece_type, piece_color):
-            if is_piece_hanging(board, piece):
-                board.push(move)
-                try:
-                    if (piece == move.from_square and not is_piece_hanging(board, move.to_square)) or \
-                            (piece != move.from_square and not is_piece_hanging(board, piece)):
-                        return True
-                finally:
-                    board.pop()
+    for piece in get_pieces(board, piece_color):
+        if is_piece_hanging(board, piece):
+            board.push(move)
+            try:
+                if (piece == move.from_square and not is_piece_hanging(board, move.to_square)) or \
+                        (piece != move.from_square and not is_piece_hanging(board, piece)):
+                    return True
+            finally:
+                board.pop()
     return False
 
 
@@ -52,12 +58,25 @@ def is_losing_material(board: Board, move: Move) -> bool:
     """
     Does the move hang a piece or sacrifice material (e.g. moves bishop under attack of pawn)
     """
+    color = board.color_at(move.from_square)
+    pieces_before_move = get_pieces(board, color)
+    num_pieces_losing_before_move = 0
+    for piece in pieces_before_move:
+        if is_piece_hanging(board, piece) or is_piece_attacked_by_weaker_piece(board, piece):
+            num_pieces_losing_before_move += 1
+
     board.push(move)
     try:
-        if is_piece_hanging(board, move.to_square) or is_piece_attacked_by_weaker_piece(board, move.to_square):
-            return True
+        pieces_after_move = get_pieces(board, color)
+        num_pieces_losing_after_move = 0
+        for piece in pieces_after_move:
+            if is_piece_hanging(board, piece) or is_piece_attacked_by_weaker_piece(board, piece):
+                num_pieces_losing_after_move += 1
     finally:
         board.pop()
+
+    if num_pieces_losing_after_move > 0 and num_pieces_losing_after_move >= num_pieces_losing_before_move:
+        return True
     return False
 
 

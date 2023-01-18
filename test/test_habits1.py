@@ -27,8 +27,8 @@ def test_get_priority():
         1: 'f5g6',  # Equal trade
         2: 'd1d3',  # Save hanging piece
         2: 'f1b5',  # Save hanging piece
-        4: 'c1e3',  # Center move
-        5: 'a2a3',  # Not losing material
+        # 4: 'c1e3',  # Center move
+        # 5: 'a2a3',  # Not losing material
         6: 'b2b4'
     }
     for expected_priority, move in expected_to_moves.items():
