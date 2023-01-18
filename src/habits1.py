@@ -1,3 +1,4 @@
+import logging
 import random
 from typing import List, Dict
 
@@ -6,10 +7,16 @@ from chess import Board, Move
 from src.chess_util import is_free_capture, is_saving_hanging_piece, is_equal_trade, is_move_towards_center, \
     is_higher_value_capture, is_losing_material
 
+logger = logging.getLogger(__name__)
+
 
 def search(board: Board) -> Move:
-    sorted_moves = sort_moves(board)
-    return sorted_moves[0]
+    try:
+        sorted_moves = sort_moves(board)
+        return sorted_moves[0]
+    except Exception:
+        logger.exception("Issue with search")
+        raise
 
 
 def sort_moves(board: Board) -> List[Move]:
@@ -43,6 +50,7 @@ def get_priority(board: Board, move: Move) -> int:
     # TODO: King towards center and attack pawns
     # TODO: Random pawn moves last
     # TODO: Add checks
+    # TODO: Focus more on piece dev
     if is_free_capture(board, move) or is_higher_value_capture(board, move):
         return 0
     elif is_equal_trade(board, move):
